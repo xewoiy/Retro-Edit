@@ -20,14 +20,7 @@ std::string VersionUtils::getVersionSimulating()
     try
     {
         auto value = mod->getSavedValue<std::string>("version");
-        if (value.empty())
-        {
-            cachedVersion = "1.9";
-        }
-        else
-        {
-            cachedVersion = value;
-        }
+        cachedVersion = value.empty() ? "1.9" : value;
     }
     catch (...)
     {
@@ -142,7 +135,6 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
 {
     auto array = CCArray::create();
     if (!array) return nullptr;
-    
     if (version.empty()) version = "1.9";
     if (!ui) return array;
     
@@ -159,12 +151,14 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
         EDITOR_BUTTON(40);
         REPEATED_INCREASED_EDITOR_BUTTON(35, 2);
         REPEATED_INCREASED_EDITOR_BUTTON(10, 4);
+
         int _11offset = 1;
         if (version == "1.1" || version == "1.2")
         {
             _11offset += (version == "1.2" ? 3 : 2);
             REPEATED_INCREASED_EDITOR_BUTTON(45, (version == "1.2" ? 3 : 2));
         }
+
         REPEATED_INCREASED_EDITOR_BUTTON(15, 7);
         EDITOR_BUTTON(41);
         REPEATED_EDITOR_BUTTON(-1, rows * columns - _11offset);
@@ -320,6 +314,9 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
         if (version == "1.4" || version == "1.5" || version == "1.6")
         {
             REPEATED_INCREASED_EDITOR_BUTTON(29, 2);
+            EDITOR_BUTTON(104);
+            if (version == "1.5" || version == "1.6")
+                EDITOR_BUTTON(105);
             EDITOR_BUTTON(31);
         }
         else
@@ -463,6 +460,8 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
         if (category == 8)
         {
             REPEATED_INCREASED_EDITOR_BUTTON(29, 2);
+            REPEATED_INCREASED_EDITOR_BUTTON(104, 2);
+            EDITOR_BUTTON(221);
             EDITOR_BUTTON(31);
             EDITOR_BUTTON(33);
             EDITOR_BUTTON(32);
@@ -674,6 +673,8 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
         if (category == 10)
         {
             REPEATED_INCREASED_EDITOR_BUTTON(29, 2);
+            REPEATED_INCREASED_EDITOR_BUTTON(104, 2);
+            EDITOR_BUTTON(221);
             EDITOR_BUTTON(31);
             EDITOR_BUTTON(33);
             EDITOR_BUTTON(32);
@@ -928,6 +929,11 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
         if (category == 11)
         {
             REPEATED_INCREASED_EDITOR_BUTTON(29, 2);
+            REPEATED_INCREASED_EDITOR_BUTTON(104, 2);
+            EDITOR_BUTTON(221);
+            EDITOR_BUTTON(717);
+            EDITOR_BUTTON(718);
+            EDITOR_BUTTON(743);
             EDITOR_BUTTON(31);
             EDITOR_BUTTON(33);
             EDITOR_BUTTON(32);
@@ -992,7 +998,6 @@ std::vector<CCMenuItemToggler*> VersionUtils::getTabs(std::string version)
         sprSlab2->setZOrder(-1);
         sprSlab2->setColor(ccBLACK);
     }
-
     auto slope1 = CCSprite::createWithSpriteFrameName("triangle_a_02_001.png");
     if (slope1)
     {
