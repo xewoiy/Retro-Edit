@@ -63,16 +63,25 @@ do { \
     else \
     { \
         btn = ui->getCreateBtn(__objid__, 4); \
-        btn->setTarget(ui, menu_selector(EditorUI::onCreateButton)); \
-        spr = CCSprite::create(); \
-        if (btn->getNormalImage()->getChildByType<GameObject>(0)) \
-            spr->setColor(btn->getNormalImage()->getChildByType<GameObject>(0)->getColor()); \
-        spr->setID("colour"_spr); \
-        spr->setVisible(false); \
-        btn->addChild(spr); \
+        if (btn) \
+        { \
+            btn->setTarget(ui, menu_selector(EditorUI::onCreateButton)); \
+            spr = CCSprite::create(); \
+            if (spr && btn->getNormalImage()) \
+            { \
+                auto go = btn->getNormalImage()->getChildByType<GameObject>(0); \
+                if (go) spr->setColor(go->getColor()); \
+                spr->setID("colour"_spr); \
+                spr->setVisible(false); \
+                btn->addChild(spr); \
+            } \
+        } \
     } \
-    btn->setTag(__objid__); \
-    array->addObject(btn); \
+    if (btn) \
+    { \
+        btn->setTag(__objid__); \
+        array->addObject(btn); \
+    } \
 } while(0)
 
 #define EDITOR_BUTTON2(__objid__, __colour__) \
@@ -82,16 +91,25 @@ do { \
     else \
     { \
         btn = ui->getCreateBtn(__objid__, __colour__); \
-        btn->setTarget(ui, menu_selector(EditorUI::onCreateButton)); \
-        spr = CCSprite::create(); \
-        if (btn->getNormalImage()->getChildByType<GameObject>(0)) \
-            spr->setColor(btn->getNormalImage()->getChildByType<GameObject>(0)->getColor()); \
-        spr->setID("colour"_spr); \
-        spr->setVisible(false); \
-        btn->addChild(spr); \
+        if (btn) \
+        { \
+            btn->setTarget(ui, menu_selector(EditorUI::onCreateButton)); \
+            spr = CCSprite::create(); \
+            if (spr && btn->getNormalImage()) \
+            { \
+                auto go = btn->getNormalImage()->getChildByType<GameObject>(0); \
+                if (go) spr->setColor(go->getColor()); \
+                spr->setID("colour"_spr); \
+                spr->setVisible(false); \
+                btn->addChild(spr); \
+            } \
+        } \
     } \
-    btn->setTag(__objid__); \
-    array->addObject(btn); \
+    if (btn) \
+    { \
+        btn->setTag(__objid__); \
+        array->addObject(btn); \
+    } \
 } while(0)
 
 #define REPEATED_EDITOR_BUTTON(__objid__, __count__) \
@@ -123,7 +141,10 @@ do { \
 CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int columns, EditorUI* ui, int category)
 {
     auto array = CCArray::create();
+    if (!array) return nullptr;
+    
     if (version.empty()) version = "1.9";
+    if (!ui) return array;
     
     isGameobjectCreateWithKeyFix = true;
     CCMenuItemSpriteExtra* btn;
@@ -924,7 +945,11 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
 
 #define TAB_SPRITE(spr) \
 do { \
-    toggle = CCMenuItemToggler::create(CCSprite::createWithSpriteFrameName("GJ_tabOff_001.png"), CCSprite::createWithSpriteFrameName("GJ_tabOn_001.png"), nullptr, nullptr); \
+    auto offBtn = CCSprite::createWithSpriteFrameName("GJ_tabOff_001.png"); \
+    auto onBtn = CCSprite::createWithSpriteFrameName("GJ_tabOn_001.png"); \
+    if (!offBtn || !onBtn) break; \
+    toggle = CCMenuItemToggler::create(offBtn, onBtn, nullptr, nullptr); \
+    if (!toggle) break; \
     spr1 = spr; \
     if (!spr1) break; \
     spr1->setOpacity(150); \

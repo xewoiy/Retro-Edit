@@ -15,6 +15,7 @@ class $modify (RetroEditorUI, EditorUI)
         std::vector<CCMenuItemToggler*> tabs;
         Ref<CCArray> objs;
         int selectedTab = 0;
+        bool initialized = false;
     };
 
     bool init(LevelEditorLayer* editorLayer)
@@ -22,16 +23,25 @@ class $modify (RetroEditorUI, EditorUI)
         if (!EditorUI::init(editorLayer))
             return false;
 
+        if (m_fields->initialized)
+            return true;
+
         int rows = 6;
         int columns = 2;
 
-        auto version = VersionUtils::getVersionSimulating();
+        std::string version = VersionUtils::getVersionSimulating();
         if (version.empty()) version = "1.9";
 
         auto tabs = VersionUtils::getTabs(version);
         m_fields->tabs = tabs;
 
         auto tabsMenu = CCMenu::create();
+        if (!tabsMenu)
+        {
+            m_fields->initialized = true;
+            return true;
+        }
+
         tabsMenu->setLayout(RowLayout::create()->setGap(2.0f)->setCrossAxisLineAlignment(AxisAlignment::Start));
         
         if (m_tabsMenu)
@@ -48,21 +58,29 @@ class $modify (RetroEditorUI, EditorUI)
         {
             if (!tab) continue;
             tabsMenu->addChild(tab);
-            if (!typeinfo_cast<CCMenuItemToggler*>(tab))
+            auto toggler = typeinfo_cast<CCMenuItemToggler*>(tab);
+            if (!toggler)
                 continue;
-            tab->setTarget(this, menu_selector(RetroEditorUI::onChangeTab));
-            tab->setTag(i);
+            toggler->setTarget(this, menu_selector(RetroEditorUI::onChangeTab));
+            toggler->setTag(i);
             i++;
         }
 
         tabsMenu->updateLayout();
 
         auto objs = CCArray::create();
+        if (!objs)
+        {
+            m_fields->initialized = true;
+            return true;
+        }
         m_fields->objs = objs;
 
         for (size_t i = 0; i < tabs.size(); i++)
         {
             auto objs2 = VersionUtils::getObjectsForVersion(version, rows, columns, this, i);
+            if (!objs2) continue;
+
             for (auto obj : CCArrayExt<CCMenuItemSpriteExtra*>(objs2))
             {
                 if (obj) objs->addObject(obj);
@@ -78,6 +96,8 @@ class $modify (RetroEditorUI, EditorUI)
 
         selectTab(0);
         this->addChild(tabsMenu);
+        
+        m_fields->initialized = true;
         return true;
     }
 
@@ -101,23 +121,26 @@ class $modify (RetroEditorUI, EditorUI)
 
     void selectTab(int index)
     {
+        if (!m_fields->initialized)
+            return;
         if (m_fields->tabs.size() <= 1)
             return;
         m_fields->selectedTab = index;
         for (size_t i = 0; i < m_fields->tabs.size(); i++)
         {
-            if (!m_fields->tabs[i]) continue;
-            m_fields->tabs[i]->toggle(i == index);
-            m_fields->tabs[i]->setEnabled(i != index);
-            if (m_fields->tabs[i]->m_offButton)
+            auto tab = m_fields->tabs[i];
+            if (!tab) continue;
+            tab->toggle(i == index);
+            tab->setEnabled(i != index);
+            if (tab->m_offButton)
             {
-                m_fields->tabs[i]->m_offButton->setScale(1);
-                m_fields->tabs[i]->m_offButton->stopAllActions();
+                tab->m_offButton->setScale(1);
+                tab->m_offButton->stopAllActions();
             }
-            if (m_fields->tabs[i]->m_onButton)
+            if (tab->m_onButton)
             {
-                m_fields->tabs[i]->m_onButton->setScale(1);
-                m_fields->tabs[i]->m_onButton->stopAllActions();
+                tab->m_onButton->setScale(1);
+                tab->m_onButton->stopAllActions();
             }
         }
         updateCustomTabs();
@@ -132,14 +155,17 @@ class $modify (RetroEditorUI, EditorUI)
 
     void updateCustomTabs()
     {
+        if (!m_fields->initialized)
+            return;
         if (!m_fields->tabsMenu)
             return;
         for (size_t i = 0; i < m_fields->bars.size(); i++)
         {
             if (m_fields->bars[i])
-                m_fields->bars[i]->setVisible(m_tabsMenu->isVisible() && i == m_fields->selectedTab);
+                m_fields->bars[i]->setVisible(m_tabsMenu && m_tabsMenu->isVisible() && i == m_fields->selectedTab);
         }
-        m_fields->tabsMenu->setVisible(m_tabsMenu->isVisible());
+        if (m_fields->tabsMenu)
+            m_fields->tabsMenu->setVisible(m_tabsMenu && m_tabsMenu->isVisible());
     }
 
     void resetUI()
@@ -151,23 +177,25 @@ class $modify (RetroEditorUI, EditorUI)
     void updateCreateMenu(bool p0)
     {
         EditorUI::updateCreateMenu(p0);
+        if (!m_fields->initialized)
+            return;
         for (auto btn : CCArrayExt<CCNode*>(m_fields->objs))
         {
             if (!btn) continue;
-            if (auto tbtn = typeinfo_cast<CreateMenuItem*>(btn))
-            {
-                auto btnSpr = typeinfo_cast<ButtonSprite*>(tbtn->getNormalImage());
-                if (!btnSpr) continue;
-                
-                auto colourSpr = typeinfo_cast<CCSprite*>(tbtn->getChildByID("colour"_spr));
-                if (!colourSpr) continue;
-                
-                auto col3 = colourSpr->getColor();
-                auto col = btn->getTag() == m_selectedObjectIndex ? ccc3(127, 127, 127) : ccWHITE;
-                
-                if (btnSpr->m_subBGSprite)
-                    btnSpr->m_subBGSprite->setColor(col);
-            }
+            auto tbtn = typeinfo_cast<CreateMenuItem*>(btn);
+            if (!tbtn) continue;
+            
+            auto btnSpr = typeinfo_cast<ButtonSprite*>(tbtn->getNormalImage());
+            if (!btnSpr) continue;
+            
+            auto colourSpr = typeinfo_cast<CCSprite*>(tbtn->getChildByID("colour"_spr));
+            if (!colourSpr) continue;
+            
+            auto col3 = colourSpr->getColor();
+            auto col = btn->getTag() == m_selectedObjectIndex ? ccc3(127, 127, 127) : ccWHITE;
+            
+            if (btnSpr->m_subBGSprite)
+                btnSpr->m_subBGSprite->setColor(col);
         }
     }
 };
