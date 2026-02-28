@@ -12,6 +12,8 @@ file(GLOB SOURCES
 	src/*/*/*.cpp
 )
 
+list(FILTER SOURCES EXCLUDE REGEX ".*ColorSelectPopup\\.cpp$")
+
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
 if (NOT DEFINED ENV{GEODE_SDK})

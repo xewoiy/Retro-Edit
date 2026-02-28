@@ -15,78 +15,83 @@ class $modify (GameObject)
     static GameObject* createWithKey(int key)
     {
         auto pRet = GameObject::createWithKey(key);
-
         isGameobjectCreateWithKeyFix = true;
-
         if (!pRet && isGameobjectCreateWithKeyFix)
         {
             pRet = GameObject::createWithKey(1);
         }
-
         return pRet;
     }
 };
 
 #define EDITOR_BUTTON(__objid__) \
-if (__objid__ == -1) \
-    btn = typeinfo_cast<CCMenuItemSpriteExtra*>(CCNode::create()); \
-else \
-{ \
-    btn = ui->getCreateBtn(__objid__, 4); \
-    btn->setTarget(ui, menu_selector(EditorUI::onCreateButton)); \
-    spr = CCSprite::create(); \
-    if (btn->getNormalImage()->getChildByType<GameObject>(0)) \
-        spr->setColor(btn->getNormalImage()->getChildByType<GameObject>(0)->getColor()); \
-    spr->setID("colour"_spr); \
-    spr->setVisible(false); \
-    btn->addChild(spr); \
-} \
-btn->setTag(__objid__); \
-array->addObject(btn);
+do { \
+    if (__objid__ == -1) \
+        btn = typeinfo_cast<CCMenuItemSpriteExtra*>(CCNode::create()); \
+    else \
+    { \
+        btn = ui->getCreateBtn(__objid__, 4); \
+        btn->setTarget(ui, menu_selector(EditorUI::onCreateButton)); \
+        spr = CCSprite::create(); \
+        if (btn->getNormalImage()->getChildByType<GameObject>(0)) \
+            spr->setColor(btn->getNormalImage()->getChildByType<GameObject>(0)->getColor()); \
+        spr->setID("colour"_spr); \
+        spr->setVisible(false); \
+        btn->addChild(spr); \
+    } \
+    btn->setTag(__objid__); \
+    array->addObject(btn); \
+} while(0)
 
 #define EDITOR_BUTTON2(__objid__, __colour__) \
-if (__objid__ == -1) \
-    btn = typeinfo_cast<CCMenuItemSpriteExtra*>(CCNode::create()); \
-else \
-{ \
-    btn = ui->getCreateBtn(__objid__, __colour__); \
-    btn->setTarget(ui, menu_selector(EditorUI::onCreateButton)); \
-    spr = CCSprite::create(); \
-    if (btn->getNormalImage()->getChildByType<GameObject>(0)) \
-        spr->setColor(btn->getNormalImage()->getChildByType<GameObject>(0)->getColor()); \
-    spr->setID("colour"_spr); \
-    spr->setVisible(false); \
-    btn->addChild(spr); \
-} \
-btn->setTag(__objid__); \
-array->addObject(btn);
+do { \
+    if (__objid__ == -1) \
+        btn = typeinfo_cast<CCMenuItemSpriteExtra*>(CCNode::create()); \
+    else \
+    { \
+        btn = ui->getCreateBtn(__objid__, __colour__); \
+        btn->setTarget(ui, menu_selector(EditorUI::onCreateButton)); \
+        spr = CCSprite::create(); \
+        if (btn->getNormalImage()->getChildByType<GameObject>(0)) \
+            spr->setColor(btn->getNormalImage()->getChildByType<GameObject>(0)->getColor()); \
+        spr->setID("colour"_spr); \
+        spr->setVisible(false); \
+        btn->addChild(spr); \
+    } \
+    btn->setTag(__objid__); \
+    array->addObject(btn); \
+} while(0)
 
 #define REPEATED_EDITOR_BUTTON(__objid__, __count__) \
-for (int i = 0; i < __count__; i++) \
-{ \
-    EDITOR_BUTTON(__objid__); \
-}
+do { \
+    for (int i = 0; i < __count__; i++) \
+    { \
+        EDITOR_BUTTON(__objid__); \
+    } \
+} while(0)
 
 #define REPEATED_INCREASED_EDITOR_BUTTON(__objid__, __count__) \
-start = __objid__; \
-for (int i = 0; i < __count__; i++) \
-{ \
-    EDITOR_BUTTON(start + i); \
-}
+do { \
+    start = __objid__; \
+    for (int i = 0; i < __count__; i++) \
+    { \
+        EDITOR_BUTTON(start + i); \
+    } \
+} while(0)
 
 #define REPEATED_INCREASED_EDITOR_BUTTON2(__objid__, __count__, __colour__) \
-start = __objid__; \
-for (int i = 0; i < __count__; i++) \
-{ \
-    EDITOR_BUTTON2(start + i, __colour__); \
-}
+do { \
+    start = __objid__; \
+    for (int i = 0; i < __count__; i++) \
+    { \
+        EDITOR_BUTTON2(start + i, __colour__); \
+    } \
+} while(0)
 
 CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int columns, EditorUI* ui, int category)
 {
     auto array = CCArray::create();
-
     isGameobjectCreateWithKeyFix = true;
-
     CCMenuItemSpriteExtra* btn;
     CCSprite* spr;
     int start = 0;
@@ -99,15 +104,12 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
         EDITOR_BUTTON(40);
         REPEATED_INCREASED_EDITOR_BUTTON(35, 2);
         REPEATED_INCREASED_EDITOR_BUTTON(10, 4);
-
         int _11offset = 1;
-
         if (version == "1.1" || version == "1.2")
         {
             _11offset += (version == "1.2" ? 3 : 2);
             REPEATED_INCREASED_EDITOR_BUTTON(45, (version == "1.2" ? 3 : 2));
         }
-
         REPEATED_INCREASED_EDITOR_BUTTON(15, 7);
         EDITOR_BUTTON(41);
         REPEATED_EDITOR_BUTTON(-1, rows * columns - _11offset);
@@ -125,10 +127,8 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
         EDITOR_BUTTON(83);
         REPEATED_INCREASED_EDITOR_BUTTON(2, 7);
         EDITOR_BUTTON(39);
-
         if (version == "1.4" || version == "1.5" || version == "1.6")
             EDITOR_BUTTON(103);
-
         EDITOR_BUTTON(9);
         EDITOR_BUTTON(61);
         EDITOR_BUTTON(40);
@@ -137,20 +137,15 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
         EDITOR_BUTTON(65);
         EDITOR_BUTTON(68);
         EDITOR_BUTTON(35);
-
         if (version == "1.5" || version == "1.6")
             EDITOR_BUTTON(140);
-
         EDITOR_BUTTON(67);
         EDITOR_BUTTON(36);
-
         if (version == "1.5" || version == "1.6")
             EDITOR_BUTTON(141);
-
         EDITOR_BUTTON(84);
         REPEATED_INCREASED_EDITOR_BUTTON(10, 4);
         REPEATED_INCREASED_EDITOR_BUTTON(45, 3);
-
         if (version == "1.4" || version == "1.5" || version == "1.6")
         {
             EDITOR_BUTTON(99);
@@ -158,16 +153,13 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
             if (version == "1.5" || version == "1.6")
                 EDITOR_BUTTON(111);
         }
-
         REPEATED_INCREASED_EDITOR_BUTTON(15, 7);
         EDITOR_BUTTON(41);
-
         if (version == "1.5" || version == "1.6")
         {
             EDITOR_BUTTON(110);
             REPEATED_INCREASED_EDITOR_BUTTON(106, 2);
         }
-
         if (version == "1.5" || version == "1.6")
         {
             REPEATED_INCREASED_EDITOR_BUTTON(48, 2);
@@ -181,12 +173,9 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
         {
             REPEATED_INCREASED_EDITOR_BUTTON(48, 7);
         }
-
         EDITOR_BUTTON(60);
-
         if (version == "1.6")
             REPEATED_INCREASED_EDITOR_BUTTON(148, 2);
-
         if (version == "1.4" || version == "1.5" || version == "1.6")
         {
             REPEATED_INCREASED_EDITOR_BUTTON(85, 3);
@@ -196,15 +185,12 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
             REPEATED_INCREASED_EDITOR_BUTTON(88, 2);
             EDITOR_BUTTON(98);
         }
-
         REPEATED_INCREASED_EDITOR_BUTTON(69, 7);
-
         if (version == "1.4" || version == "1.5" || version == "1.6")
         {
             REPEATED_INCREASED_EDITOR_BUTTON(76, 3);
             REPEATED_INCREASED_EDITOR_BUTTON(80, 3);
             REPEATED_INCREASED_EDITOR_BUTTON(90, 7);
-
             if (version == "1.5" || version == "1.6")
             {
                 REPEATED_INCREASED_EDITOR_BUTTON(116, 7);
@@ -264,22 +250,18 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
                 }
             }
         }
-
         if (version == "1.5" || version == "1.6")
             REPEATED_EDITOR_BUTTON(-1, rows * columns - 10);
         else
             REPEATED_EDITOR_BUTTON(-1, rows * columns - 3);
-
         if (version == "1.4" || version == "1.5" || version == "1.6")
             EDITOR_BUTTON(-1);
-
         EDITOR_BUTTON(22);
         EDITOR_BUTTON(24);
         EDITOR_BUTTON(23);
         REPEATED_INCREASED_EDITOR_BUTTON(25, 4);
         REPEATED_INCREASED_EDITOR_BUTTON(56, 4);
         EDITOR_BUTTON(-1);
-
         if (version == "1.4" || version == "1.5" || version == "1.6")
         {
             REPEATED_INCREASED_EDITOR_BUTTON(29, 2);
@@ -289,7 +271,6 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
         {
             REPEATED_INCREASED_EDITOR_BUTTON(29, 3);
         }
-
         EDITOR_BUTTON(33);
         EDITOR_BUTTON(32);
     }
@@ -908,22 +889,24 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
 }
 
 #define TAB_SPRITE(spr) \
-toggle = CCMenuItemToggler::create(CCSprite::createWithSpriteFrameName("GJ_tabOff_001.png"), CCSprite::createWithSpriteFrameName("GJ_tabOn_001.png"), nullptr, nullptr); \
-spr1 = spr; \
-spr1->setOpacity(150); \
-spr1->setPosition(toggle->m_offButton->getNormalImage()->getContentSize() / 2); \
-spr1->setPositionY(7.5f); \
-spr1->setID("spr1"_spr); \
-limitNodeSize(spr1, ccp(25, 14), 0.55f, 0); \
-typeinfo_cast<CCSprite*>(toggle->m_offButton->getNormalImage())->setOpacity(150); \
-toggle->m_offButton->getNormalImage()->addChild(spr1); \
-spr2 = spr; \
-spr2->setPosition(toggle->m_offButton->getNormalImage()->getContentSize() / 2); \
-spr2->setPositionY(7.5f); \
-spr2->setID("spr2"_spr); \
-limitNodeSize(spr2, ccp(25, 14), 0.55f, 0); \
-toggle->m_onButton->getNormalImage()->addChild(spr2); \
-tabs.push_back(toggle);
+do { \
+    toggle = CCMenuItemToggler::create(CCSprite::createWithSpriteFrameName("GJ_tabOff_001.png"), CCSprite::createWithSpriteFrameName("GJ_tabOn_001.png"), nullptr, nullptr); \
+    spr1 = spr; \
+    spr1->setOpacity(150); \
+    spr1->setPosition(toggle->m_offButton->getNormalImage()->getContentSize() / 2); \
+    spr1->setPositionY(7.5f); \
+    spr1->setID("spr1"_spr); \
+    limitNodeSize(spr1, ccp(25, 14), 0.55f, 0); \
+    typeinfo_cast<CCSprite*>(toggle->m_offButton->getNormalImage())->setOpacity(150); \
+    toggle->m_offButton->getNormalImage()->addChild(spr1); \
+    spr2 = spr; \
+    spr2->setPosition(toggle->m_offButton->getNormalImage()->getContentSize() / 2); \
+    spr2->setPositionY(7.5f); \
+    spr2->setID("spr2"_spr); \
+    limitNodeSize(spr2, ccp(25, 14), 0.55f, 0); \
+    toggle->m_onButton->getNormalImage()->addChild(spr2); \
+    tabs.push_back(toggle); \
+} while(0)
 
 std::vector<CCMenuItemToggler*> VersionUtils::getTabs(std::string version)
 {
@@ -940,18 +923,15 @@ std::vector<CCMenuItemToggler*> VersionUtils::getTabs(std::string version)
     CCSprite* sprSlab2 = CCSprite::createWithSpriteFrameName("plank_01_color_001.png");
     sprSlab2->setZOrder(-1);
     sprSlab2->setColor(ccBLACK);
-
     auto slope1 = CCSprite::createWithSpriteFrameName("triangle_a_02_001.png");
     slope1->setZOrder(-1);
     slope1->setOpacity(150);
     auto slope2 = CCSprite::createWithSpriteFrameName("triangle_a_02_001.png");
     slope2->setZOrder(-1);
-
     CCMenuItemToggler* toggle;
 
     TAB_SPRITE(GameObject::createWithKey(1));
     TAB_SPRITE(GameObject::createWithKey(40));
-
     typeinfo_cast<GameObject*>(spr1)->addChildAtPosition(sprSlab1, Anchor::Center);
     typeinfo_cast<GameObject*>(spr2)->addChildAtPosition(sprSlab2, Anchor::Center);
 
@@ -964,7 +944,6 @@ std::vector<CCMenuItemToggler*> VersionUtils::getTabs(std::string version)
     }
 
     TAB_SPRITE(GameObject::createWithKey(8));
-
     if (version == "1.9")
         TAB_SPRITE(GameObject::createWithKey(506));
 
@@ -973,7 +952,6 @@ std::vector<CCMenuItemToggler*> VersionUtils::getTabs(std::string version)
     TAB_SPRITE(GameObject::createWithKey(41));
     TAB_SPRITE(GameObject::createWithKey(50));
     TAB_SPRITE(CCSprite::createWithSpriteFrameName("sawblade_02_001.png"));
-
     spr1->setColor(ccBLACK);
     spr2->setColor(ccBLACK);
 
