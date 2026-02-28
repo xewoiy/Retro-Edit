@@ -15,13 +15,7 @@
 		"modtober24",
 		"editor"
 	],
-	"dependencies": [
-		{
-			"id": "alphalaneous.old_color_triggers",
-			"importance": "required",
-			"version": ">=1.0.2"
-		}
-	],
+	"dependencies": [],
 	"settings": {
 		"version": {
 			"type": "string",

@@ -1,5 +1,7 @@
+cpp
 #include "Version.hpp"
 #include <Geode/modify/GameObject.hpp>
+#include <Geode/utils/casts.hpp>
 
 using namespace geode::prelude;
 
@@ -10,7 +12,6 @@ std::string VersionUtils::getVersionSimulating()
 
 bool isGameobjectCreateWithKeyFix = false;
 
-// What the fucking fuck is this assing ass
 class $modify (GameObject)
 {
     static GameObject* createWithKey(int key)
@@ -21,55 +22,7 @@ class $modify (GameObject)
 
         if (!pRet && isGameobjectCreateWithKeyFix)
         {
-            // idk vro
-
-            if (key == 104)
-            {
-                pRet = GameObject::createWithKey(899);
-                pRet->m_objectID = 104;
-                pRet->m_objectType = GameObjectType::Modifier;
-                pRet->m_unk390 = as<int>(GameObjectType::Modifier);
-
-                if (CCSprite* newSpr = CCSprite::create("alphalaneous.old_color_triggers/edit_eTintLBtn_001.png"))
-                {
-                    pRet->m_hasSpecialChild = true;
-                    pRet->setTexture(newSpr->getTexture());
-                    pRet->setTextureRect(newSpr->getTextureRect());
-                }
-            }
-
-            if (key == 221)
-            {
-                pRet = GameObject::createWithKey(899);
-                pRet->m_objectID = 221;
-                pRet->m_objectType = GameObjectType::Modifier;
-                pRet->m_unk390 = as<int>(GameObjectType::Modifier);
-
-                if (CCSprite* newSpr = CCSprite::createWithSpriteFrameName("edit_eTintCol01Btn_001.png"))
-                {
-                    pRet->m_hasSpecialChild = true;
-                    pRet->setTexture(newSpr->getTexture());
-                    pRet->setTextureRect(newSpr->getTextureRect());
-                }
-            }
-
-            if (key == 717 || key == 718 || key == 743)
-            {
-                pRet = GameObject::createWithKey(899);
-                pRet->m_objectID = key;
-                pRet->m_objectType = GameObjectType::Modifier;
-                pRet->m_unk390 = as<int>(GameObjectType::Modifier);
-
-                if (CCSprite* newSpr = CCSprite::createWithSpriteFrameName("edit_eTintCol01Btn_001.png"))
-                {
-                    pRet->m_hasSpecialChild = true;
-                    pRet->setTexture(newSpr->getTexture());
-                    pRet->setTextureRect(newSpr->getTextureRect());
-                }
-            }
-
-            if (!pRet)
-                pRet = GameObject::createWithKey(1);
+            pRet = GameObject::createWithKey(1);
         }
 
         return pRet;
@@ -78,7 +31,7 @@ class $modify (GameObject)
 
 #define EDITOR_BUTTON(__objid__) \
 if (__objid__ == -1) \
-    btn = as<CCMenuItemSpriteExtra*>(CCNode::create()); \
+    btn = geode::as<CCMenuItemSpriteExtra*>(CCNode::create()); \
 else \
 { \
     btn = ui->getCreateBtn(__objid__, 4); \
@@ -95,7 +48,7 @@ array->addObject(btn);
 
 #define EDITOR_BUTTON2(__objid__, __colour__) \
 if (__objid__ == -1) \
-    btn = as<CCMenuItemSpriteExtra*>(CCNode::create()); \
+    btn = geode::as<CCMenuItemSpriteExtra*>(CCNode::create()); \
 else \
 { \
     btn = ui->getCreateBtn(__objid__, __colour__); \
@@ -129,8 +82,6 @@ for (int i = 0; i < __count__; i++) \
 { \
     EDITOR_BUTTON2(start + i, __colour__); \
 }
-
-// There is a better way to do this, Too bad!
 
 CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int columns, EditorUI* ui, int category)
 {
@@ -379,13 +330,6 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
         {
             REPEATED_INCREASED_EDITOR_BUTTON(29, 2);
 
-            EDITOR_BUTTON(104);
-
-            if (version == "1.5" || version == "1.6")
-            {
-                EDITOR_BUTTON(105);
-            }
-
             EDITOR_BUTTON(31);
         }
         else
@@ -576,8 +520,6 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
         if (category == 8)
         {
             REPEATED_INCREASED_EDITOR_BUTTON(29, 2);
-            REPEATED_INCREASED_EDITOR_BUTTON(104, 2);
-            EDITOR_BUTTON(221);
             EDITOR_BUTTON(31);
             EDITOR_BUTTON(33);
             EDITOR_BUTTON(32);
@@ -855,8 +797,6 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
         if (category == 10)
         {
             REPEATED_INCREASED_EDITOR_BUTTON(29, 2);
-            REPEATED_INCREASED_EDITOR_BUTTON(104, 2);
-            EDITOR_BUTTON(221);
             EDITOR_BUTTON(31);
             EDITOR_BUTTON(33);
             EDITOR_BUTTON(32);
@@ -1191,13 +1131,6 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
         if (category == 11)
         {
             REPEATED_INCREASED_EDITOR_BUTTON(29, 2);
-            REPEATED_INCREASED_EDITOR_BUTTON(104, 2);
-            EDITOR_BUTTON(744);
-            EDITOR_BUTTON(221);
-            EDITOR_BUTTON(717);
-            EDITOR_BUTTON(718);
-            EDITOR_BUTTON(743);
-
             EDITOR_BUTTON(31);
             EDITOR_BUTTON(33);
             EDITOR_BUTTON(32);
@@ -1223,7 +1156,7 @@ spr1->setPosition(toggle->m_offButton->getNormalImage()->getContentSize() / 2); 
 spr1->setPositionY(7.5f); \
 spr1->setID("spr1"_spr); \
 limitNodeSize(spr1, ccp(25, 14), 0.55f, 0); \
-as<CCSprite*>(toggle->m_offButton->getNormalImage())->setOpacity(150); \
+geode::as<CCSprite*>(toggle->m_offButton->getNormalImage())->setOpacity(150); \
 toggle->m_offButton->getNormalImage()->addChild(spr1); \
 spr2 = spr; \
 spr2->setPosition(toggle->m_offButton->getNormalImage()->getContentSize() / 2); \
@@ -1236,7 +1169,7 @@ tabs.push_back(toggle);
 std::vector<CCMenuItemToggler*> VersionUtils::getTabs(std::string version)
 {
     if (version == "1.0" || version == "1.1" || version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.6")
-        return { as<CCMenuItemToggler*>(CCNode::create()) };
+        return { geode::as<CCMenuItemToggler*>(CCNode::create()) };
 
     std::vector<CCMenuItemToggler*> tabs;
     CCSprite* spr1;
@@ -1260,16 +1193,16 @@ std::vector<CCMenuItemToggler*> VersionUtils::getTabs(std::string version)
     TAB_SPRITE(GameObject::createWithKey(1));
     TAB_SPRITE(GameObject::createWithKey(40));
 
-    as<GameObject*>(spr1)->addChildAtPosition(sprSlab1, Anchor::Center);
-    as<GameObject*>(spr2)->addChildAtPosition(sprSlab2, Anchor::Center);
+    geode::as<GameObject*>(spr1)->addChildAtPosition(sprSlab1, Anchor::Center);
+    geode::as<GameObject*>(spr2)->addChildAtPosition(sprSlab2, Anchor::Center);
 
     if (version == "1.8" || version == "1.9")
     {
         TAB_SPRITE(GameObject::createWithKey(467));
         TAB_SPRITE(GameObject::createWithKey(289));
 
-        as<GameObject*>(spr1)->addChildAtPosition(slope1, Anchor::Center);
-        as<GameObject*>(spr2)->addChildAtPosition(slope2, Anchor::Center);
+        geode::as<GameObject*>(spr1)->addChildAtPosition(slope1, Anchor::Center);
+        geode::as<GameObject*>(spr2)->addChildAtPosition(slope2, Anchor::Center);
     }
 
     TAB_SPRITE(GameObject::createWithKey(8));
@@ -1287,8 +1220,6 @@ std::vector<CCMenuItemToggler*> VersionUtils::getTabs(std::string version)
 
     spr1->setColor(ccBLACK);
     spr2->setColor(ccBLACK);
-
-    TAB_SPRITE(CCSprite::create("alphalaneous.old_color_triggers/edit_eTintBGBtn_001.png"));
 
     return tabs;
 }

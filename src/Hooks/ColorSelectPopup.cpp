@@ -1,3 +1,4 @@
+/*
 #include <Geode/Geode.hpp>
 #include <Geode/modify/ColorSelectPopup.hpp>
 
@@ -17,3 +18,4 @@ class $modify (ColorSelectPopup)
         return true;
     }
 };
+*/
