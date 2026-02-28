@@ -3,15 +3,41 @@
 
 using namespace geode::prelude;
 
+static std::string cachedVersion = "";
+
 std::string VersionUtils::getVersionSimulating()
 {
+    if (!cachedVersion.empty())
+        return cachedVersion;
+    
     auto mod = Mod::get();
-    if (!mod) return "1.9";
+    if (!mod)
+    {
+        cachedVersion = "1.9";
+        return cachedVersion;
+    }
     
-    auto version = mod->getSettingValue<std::string>("version");
-    if (version.empty()) return "1.9";
+    try
+    {
+        auto value = mod->getSavedValue<std::string>("version");
+        if (value.empty())
+        {
+            cachedVersion = "1.9";
+        }
+        else
+        {
+            cachedVersion = value;
+        }
+    }
+    catch (...)
+    {
+        cachedVersion = "1.9";
+    }
     
-    return version;
+    if (cachedVersion.empty())
+        cachedVersion = "1.9";
+    
+    return cachedVersion;
 }
 
 bool isGameobjectCreateWithKeyFix = false;
