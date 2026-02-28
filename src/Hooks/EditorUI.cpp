@@ -1,7 +1,6 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/EditButtonBar.hpp>
-#include <Geode/utils/casts.hpp>
 
 #include "../Version.hpp"
 
@@ -40,13 +39,10 @@ class $modify (RetroEditorUI, EditorUI)
         for (auto tab : tabs)
         {
             tabsMenu->addChild(tab);
-
             if (!typeinfo_cast<CCMenuItemToggler*>(tab))
                 continue;
-
             tab->setTarget(this, menu_selector(RetroEditorUI::onChangeTab));
             tab->setTag(i);
-
             i++;
         }
 
@@ -58,22 +54,17 @@ class $modify (RetroEditorUI, EditorUI)
         for (size_t i = 0; i < tabs.size(); i++)
         {
             auto objs2 = VersionUtils::getObjectsForVersion(VersionUtils::getVersionSimulating(), rows, columns, this, i);
-
             for (auto obj : CCArrayExt<CCMenuItemSpriteExtra*>(objs2))
-            {
                 objs->addObject(obj);
-            }
 
             auto editBar = EditButtonBar::create(objs2, ccp(CCDirector::get()->getWinSize().width / 2 - 5, 86), 69, false, rows, columns);
             editBar->setZOrder(10);
             editBar->setID("edit-bar"_spr);
             m_fields->bars.push_back(editBar);
-
             this->addChild(editBar, 5 + i);
         }
 
         selectTab(0);
-
         this->addChild(tabsMenu);
         return true;
     }
@@ -81,23 +72,14 @@ class $modify (RetroEditorUI, EditorUI)
     void setupCreateMenu()
     {
         EditorUI::setupCreateMenu();
-
         if (auto tabs = m_tabsMenu)
-        {
             tabs->setScale(0);
-        }
-
         for (auto tab : CCArrayExt<CCNode*>(m_createButtonBars))
-        {
             tab->setScale(0);
-        }
-
         Loader::get()->queueInMainThread([this]
         {
             for (auto tab : CCArrayExt<CCNode*>(m_createButtonBars))
-            {
                 tab->setScale(0);
-            }
         });
     }
 
@@ -105,9 +87,7 @@ class $modify (RetroEditorUI, EditorUI)
     {
         if (m_fields->tabs.size() <= 1)
             return;
-
         m_fields->selectedTab = index;
-
         for (size_t i = 0; i < m_fields->tabs.size(); i++)
         {
             m_fields->tabs[i]->toggle(i == index);
@@ -117,14 +97,12 @@ class $modify (RetroEditorUI, EditorUI)
             m_fields->tabs[i]->m_offButton->stopAllActions();
             m_fields->tabs[i]->m_onButton->stopAllActions();
         }
-
         updateCustomTabs();
     }
 
     void onChangeTab(CCObject* sender)
     {
         selectTab(sender->getTag());
-
         updateCustomTabs();
     }
 
@@ -132,37 +110,29 @@ class $modify (RetroEditorUI, EditorUI)
     {
         if (!m_fields->tabsMenu)
             return;
-
         for (size_t i = 0; i < m_fields->bars.size(); i++)
-        {
             m_fields->bars[i]->setVisible(m_tabsMenu->isVisible() && i == m_fields->selectedTab);
-        }
-
         m_fields->tabsMenu->setVisible(m_tabsMenu->isVisible());
     }
 
     void resetUI()
     {
         EditorUI::resetUI();
-
         updateCustomTabs();
     }
 
     void updateCreateMenu(bool p0)
     {
         EditorUI::updateCreateMenu(p0);
-
         for (auto btn : CCArrayExt<CCNode*>(m_fields->objs))
         {
             if (auto tbtn = typeinfo_cast<CreateMenuItem*>(btn))
             {
-                auto btnSpr = geode::as<ButtonSprite*>(tbtn->getNormalImage());
+                auto btnSpr = typeinfo_cast<ButtonSprite*>(tbtn->getNormalImage());
                 auto go = btnSpr->getChildByType<EffectGameObject>(0) || btnSpr->getChildByType<GameObject>(0);
-
-                auto col3 = geode::as<CCSprite*>(tbtn->getChildByID("colour"_spr))->getColor();
+                auto col3 = typeinfo_cast<CCSprite*>(tbtn->getChildByID("colour"_spr))->getColor();
                 auto col = btn->getTag() == m_selectedObjectIndex ? ccc3(127, 127, 127) : ccWHITE;
                 auto col2 = col3 == ccBLACK ? col3 : (btn->getTag() == m_selectedObjectIndex ? ccc3(127, 127, 127) : col3);
-
                 btnSpr->m_subBGSprite->setColor(col);
             }
         }
