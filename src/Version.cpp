@@ -917,30 +917,47 @@ std::vector<CCMenuItemToggler*> VersionUtils::getTabs(std::string version)
     CCSprite* spr1;
     CCSprite* spr2;
     CCSprite* sprSlab1 = CCSprite::createWithSpriteFrameName("plank_01_color_001.png");
-    sprSlab1->setZOrder(-1);
-    sprSlab1->setColor(ccBLACK);
-    sprSlab1->setOpacity(150);
+    if (sprSlab1)
+    {
+        sprSlab1->setZOrder(-1);
+        sprSlab1->setColor(ccBLACK);
+        sprSlab1->setOpacity(150);
+    }
     CCSprite* sprSlab2 = CCSprite::createWithSpriteFrameName("plank_01_color_001.png");
-    sprSlab2->setZOrder(-1);
-    sprSlab2->setColor(ccBLACK);
+    if (sprSlab2)
+    {
+        sprSlab2->setZOrder(-1);
+        sprSlab2->setColor(ccBLACK);
+    }
+
     auto slope1 = CCSprite::createWithSpriteFrameName("triangle_a_02_001.png");
-    slope1->setZOrder(-1);
-    slope1->setOpacity(150);
+    if (slope1)
+    {
+        slope1->setZOrder(-1);
+        slope1->setOpacity(150);
+    }
     auto slope2 = CCSprite::createWithSpriteFrameName("triangle_a_02_001.png");
-    slope2->setZOrder(-1);
+    if (slope2)
+        slope2->setZOrder(-1);
+
     CCMenuItemToggler* toggle;
 
     TAB_SPRITE(GameObject::createWithKey(1));
     TAB_SPRITE(GameObject::createWithKey(40));
-    typeinfo_cast<GameObject*>(spr1)->addChildAtPosition(sprSlab1, Anchor::Center);
-    typeinfo_cast<GameObject*>(spr2)->addChildAtPosition(sprSlab2, Anchor::Center);
+    
+    if (spr1 && sprSlab1)
+        typeinfo_cast<GameObject*>(spr1)->addChildAtPosition(sprSlab1, Anchor::Center);
+    if (spr2 && sprSlab2)
+        typeinfo_cast<GameObject*>(spr2)->addChildAtPosition(sprSlab2, Anchor::Center);
 
     if (version == "1.8" || version == "1.9")
     {
         TAB_SPRITE(GameObject::createWithKey(467));
         TAB_SPRITE(GameObject::createWithKey(289));
-        typeinfo_cast<GameObject*>(spr1)->addChildAtPosition(slope1, Anchor::Center);
-        typeinfo_cast<GameObject*>(spr2)->addChildAtPosition(slope2, Anchor::Center);
+        if (spr1 && slope1)
+            typeinfo_cast<GameObject*>(spr1)->addChildAtPosition(slope1, Anchor::Center);
+        if (spr2 && slope2)
+            typeinfo_cast<GameObject*>(spr2)->addChildAtPosition(slope2, Anchor::Center);
     }
 
     TAB_SPRITE(GameObject::createWithKey(8));
@@ -952,8 +969,9 @@ std::vector<CCMenuItemToggler*> VersionUtils::getTabs(std::string version)
     TAB_SPRITE(GameObject::createWithKey(41));
     TAB_SPRITE(GameObject::createWithKey(50));
     TAB_SPRITE(CCSprite::createWithSpriteFrameName("sawblade_02_001.png"));
-    spr1->setColor(ccBLACK);
-    spr2->setColor(ccBLACK);
+
+    if (spr1) spr1->setColor(ccBLACK);
+    if (spr2) spr2->setColor(ccBLACK);
 
     return tabs;
 }
