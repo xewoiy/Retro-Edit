@@ -15,7 +15,7 @@
 		"modtober24",
 		"editor"
 	],
-	"dependencies": [],
+	"dependencies": {},
 	"settings": {
 		"version": {
 			"type": "string",
