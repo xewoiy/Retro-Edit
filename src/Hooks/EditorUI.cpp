@@ -25,7 +25,10 @@ class $modify (RetroEditorUI, EditorUI)
         int rows = 6;
         int columns = 2;
 
-        auto tabs = VersionUtils::getTabs(VersionUtils::getVersionSimulating());
+        auto version = VersionUtils::getVersionSimulating();
+        if (version.empty()) version = "1.9";
+
+        auto tabs = VersionUtils::getTabs(version);
         m_fields->tabs = tabs;
 
         auto tabsMenu = CCMenu::create();
@@ -59,7 +62,7 @@ class $modify (RetroEditorUI, EditorUI)
 
         for (size_t i = 0; i < tabs.size(); i++)
         {
-            auto objs2 = VersionUtils::getObjectsForVersion(VersionUtils::getVersionSimulating(), rows, columns, this, i);
+            auto objs2 = VersionUtils::getObjectsForVersion(version, rows, columns, this, i);
             for (auto obj : CCArrayExt<CCMenuItemSpriteExtra*>(objs2))
             {
                 if (obj) objs->addObject(obj);

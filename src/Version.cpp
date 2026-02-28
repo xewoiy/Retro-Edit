@@ -5,7 +5,13 @@ using namespace geode::prelude;
 
 std::string VersionUtils::getVersionSimulating()
 {
-    return Mod::get()->getSettingValue<std::string>("version");
+    auto mod = Mod::get();
+    if (!mod) return "1.9";
+    
+    auto version = mod->getSettingValue<std::string>("version");
+    if (version.empty()) return "1.9";
+    
+    return version;
 }
 
 bool isGameobjectCreateWithKeyFix = false;
@@ -91,6 +97,8 @@ do { \
 CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int columns, EditorUI* ui, int category)
 {
     auto array = CCArray::create();
+    if (version.empty()) version = "1.9";
+    
     isGameobjectCreateWithKeyFix = true;
     CCMenuItemSpriteExtra* btn;
     CCSprite* spr;
@@ -630,7 +638,7 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
             REPEATED_INCREASED_EDITOR_BUTTON(56, 4);
         }
     }
-    else if (version == "1.9")
+    else
     {
         if (category == 0)
         {
@@ -892,12 +900,14 @@ CCArray* VersionUtils::getObjectsForVersion(std::string version, int rows, int c
 do { \
     toggle = CCMenuItemToggler::create(CCSprite::createWithSpriteFrameName("GJ_tabOff_001.png"), CCSprite::createWithSpriteFrameName("GJ_tabOn_001.png"), nullptr, nullptr); \
     spr1 = spr; \
+    if (!spr1) break; \
     spr1->setOpacity(150); \
     spr1->setPosition(toggle->m_offButton->getNormalImage()->getContentSize() / 2); \
     spr1->setPositionY(7.5f); \
     spr1->setID("spr1"_spr); \
     limitNodeSize(spr1, ccp(25, 14), 0.55f, 0); \
-    typeinfo_cast<CCSprite*>(toggle->m_offButton->getNormalImage())->setOpacity(150); \
+    auto offSpr = typeinfo_cast<CCSprite*>(toggle->m_offButton->getNormalImage()); \
+    if (offSpr) offSpr->setOpacity(150); \
     toggle->m_offButton->getNormalImage()->addChild(spr1); \
     spr2 = spr; \
     spr2->setPosition(toggle->m_offButton->getNormalImage()->getContentSize() / 2); \
@@ -910,6 +920,8 @@ do { \
 
 std::vector<CCMenuItemToggler*> VersionUtils::getTabs(std::string version)
 {
+    if (version.empty()) version = "1.9";
+    
     if (version == "1.0" || version == "1.1" || version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.6")
         return { typeinfo_cast<CCMenuItemToggler*>(CCNode::create()) };
 
